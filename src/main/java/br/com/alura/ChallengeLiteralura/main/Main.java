@@ -1,16 +1,18 @@
 package br.com.alura.ChallengeLiteralura.main;
 
+import br.com.alura.ChallengeLiteralura.model.Book;
 import br.com.alura.ChallengeLiteralura.model.Data;
+import br.com.alura.ChallengeLiteralura.model.DataBook;
 import br.com.alura.ChallengeLiteralura.repository.AuthorRepository;
 import br.com.alura.ChallengeLiteralura.repository.BookRepository;
 import br.com.alura.ChallengeLiteralura.service.ConsumeApi;
 import br.com.alura.ChallengeLiteralura.service.DataConvert;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
 
-
-public class Main {
+public class Main  {
 
     private Scanner scan = new Scanner(System.in);
     private BookRepository bookRepository;
@@ -18,6 +20,11 @@ public class Main {
     private ConsumeApi consumeApi = new ConsumeApi();
     private DataConvert dataConvert = new DataConvert();
     private final String ADDRESS = "https://gutendex.com/books/?search=";
+
+    public Main(BookRepository bookRepository, AuthorRepository authorRepository) {
+        this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
+    }
 
     public void showMenu() {
 
@@ -67,7 +74,19 @@ public class Main {
     private void findBookByTitle() {
 
         var result = getdataTitle();
-        System.out.println(result);
+
+        if(result != null){
+            DataBook dataBook = result.dataBooks().get(0);
+            Book book = new Book(dataBook);
+            bookRepository.save(book);
+            System.out.println("Livro cadastrado com sucesso!");
+            printBooksDetails(book);
+
+
+
+
+        }
+
     }
 
     private Data getdataTitle() {
@@ -81,5 +100,14 @@ public class Main {
         } else {
             return data;
         }
+    }
+
+    private void printBooksDetails(Book book) {
+        System.out.println("------------LIVRO-----------------");
+        System.out.println("Titulo: " + book.getTitle());
+        book.getAuthors().forEach(autor -> System.out.println("Autor: " + autor.getName()));
+        System.out.println("Idioma: " + String.join(", ", book.getLanguage()));
+        System.out.println("Numero de downloads: " + book.getDownload_count());
+        System.out.println("----------------------------------");
     }
 }

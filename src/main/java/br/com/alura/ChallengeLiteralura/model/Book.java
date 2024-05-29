@@ -12,6 +12,7 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true)
     private String title;
 
@@ -23,8 +24,19 @@ public class Book {
     )
 
     private List<Author> authors;
+
     private List<String> languages;
+
     private Integer download_count;
+
+    public Book() {}
+
+    public Book(DataBook dataBook) {
+        this.title = dataBook.title();
+        this.authors = dataBook.authors().stream().map(da -> new Author(da.name(), da.birth_year(), da.death_year())).toList();
+        this.languages = dataBook.languages();
+        this.download_count = dataBook.download_count();
+    }
 
     public Long getId() {
         return id;
