@@ -53,7 +53,7 @@ public class Main  {
                     findBookByTitle();
                     break;
                 case 2:
-                    System.out.println("option " + option);
+                    listRegisteredBooks();
                     break;
                 case 3:
                     System.out.println("option " + option);
@@ -69,6 +69,13 @@ public class Main  {
                     System.out.println("Opção inválida");
             }
         }
+    }
+
+    private void listRegisteredBooks() {
+
+        System.out.println(" Livros registrados:");
+        bookRepository.findAll().forEach(this::printBooksDetails);
+
     }
 
     private void findBookByTitle() {
@@ -114,6 +121,7 @@ public class Main  {
         book.getAuthors().forEach(autor -> System.out.println("Autor: " + autor.getName()));
         System.out.println("Idioma: " + String.join(", ", book.getLanguage()));
         System.out.println("Numero de downloads: " + book.getDownload_count());
-        System.out.println("----------------------------------");
+        System.out.println("----------------------------------\n");
+
     }
 }
