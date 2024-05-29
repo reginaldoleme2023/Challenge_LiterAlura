@@ -78,9 +78,15 @@ public class Main  {
         if(result != null){
             DataBook dataBook = result.dataBooks().get(0);
             Book book = new Book(dataBook);
-            bookRepository.save(book);
-            System.out.println("Livro cadastrado com sucesso!");
-            printBooksDetails(book);
+            var checkBookExists = bookRepository.findByTitleContainsIgnoreCase(book.getTitle());
+            if (checkBookExists.isPresent()) {
+                System.out.println(" Livro ja Cadastrado!");
+            }else{
+                bookRepository.save(book);
+                System.out.println("Livro cadastrado com sucesso!");
+                printBooksDetails(book);
+            }
+
 
 
 
