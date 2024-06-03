@@ -7,9 +7,9 @@ import br.com.alura.ChallengeLiteralura.repository.AuthorRepository;
 import br.com.alura.ChallengeLiteralura.repository.BookRepository;
 import br.com.alura.ChallengeLiteralura.service.ConsumeApi;
 import br.com.alura.ChallengeLiteralura.service.DataConvert;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
+
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main  {
@@ -56,12 +56,14 @@ public class Main  {
                     listRegisteredBooks();
                     break;
                 case 3:
-                    System.out.println("option " + option);
+                    listRegisteredAuthors();
                     break;
                 case 4:
-                    System.out.println("option " + option);
+                    listLivingAuthors();
                     break;
-
+                case 5:
+                    listlanguageBook();
+                    break;
                 case 0:
                     System.out.println("Saindo...");
                     break;
@@ -69,6 +71,81 @@ public class Main  {
                     System.out.println("Opção inválida");
             }
         }
+    }
+
+    private void listlanguageBook() {
+
+        System.out.println("""
+                Informe a sigla do Idioma que deseja pesquisar 
+                 ES - Espanhol
+                 EN - Inglês
+                 FR - Francês
+                 PT - Português
+                 """);
+        var language = scan.nextLine().toLowerCase();
+
+        try {
+        var booksByLanguage = bookRepository.findBooksByLanguage(language);
+
+
+        if(booksByLanguage.isEmpty()){
+
+            System.out.println(" Não foram encontrados livros nesse idioma");
+
+        }else{
+
+            booksByLanguage.forEach(this::printBooksDetails);
+
+        }
+
+
+
+    }catch (InputMismatchException e){
+
+        System.out.println("Entrada inválida!");
+
+    }
+
+    }
+
+    private void listLivingAuthors() {
+
+        System.out.println("Informe o ano para listar os autores vivos nesse período: ");
+        var year = scan.nextInt();
+        scan.nextLine();
+
+        try {
+
+            var livingAuthors = authorRepository.findlivingAuthorByYear(year);
+
+
+                if(livingAuthors.isEmpty()){
+
+                    System.out.println(" Não foram encontrados autores vivos no ano de " + year);
+
+                }else{
+
+                    livingAuthors.forEach(a -> System.out.println("Autor: " + a));
+
+                }
+
+
+
+        }catch (InputMismatchException e){
+
+            System.out.println("Entrada inválida!");
+
+        }
+
+    }
+
+    private void listRegisteredAuthors() {
+
+        System.out.println(" Autores Registrados:");
+        authorRepository.findAll().stream()
+                .distinct()
+                .forEach(a -> System.out.println("Autor: " + a.getName()));
+
     }
 
     private void listRegisteredBooks() {
@@ -118,10 +195,10 @@ public class Main  {
     private void printBooksDetails(Book book) {
         System.out.println("------------LIVRO-----------------");
         System.out.println("Titulo: " + book.getTitle());
-        book.getAuthors().forEach(autor -> System.out.println("Autor: " + autor.getName()));
-        System.out.println("Idioma: " + String.join(", ", book.getLanguage()));
+        book.getAuthors().forEach(author -> System.out.println("Autor: " + author.getName()));
+        System.out.println("Idioma: " + String.join(", ", book.getLanguages()));
         System.out.println("Numero de downloads: " + book.getDownload_count());
         System.out.println("----------------------------------\n");
-
     }
+
 }

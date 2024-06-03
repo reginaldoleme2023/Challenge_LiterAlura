@@ -24,10 +24,20 @@ public class Book {
     )
 
     private List<Author> authors;
-
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "book_languages", joinColumns = @JoinColumn(name = "book_id"))
+    @Column(name = "language")
     private List<String> languages;
 
     private Integer download_count;
+
+    public List<String> getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(List<String> languages) {
+        this.languages = languages;
+    }
 
     public Book() {}
 
@@ -77,4 +87,6 @@ public class Book {
     public void setDownload_count(Integer download_count) {
         this.download_count = download_count;
     }
+
+
 }
